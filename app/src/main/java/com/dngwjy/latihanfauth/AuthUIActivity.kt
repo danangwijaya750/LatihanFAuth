@@ -16,11 +16,13 @@ class AuthUIActivity : AppCompatActivity() {
 
     val SIGN_IN_CODE=111
     lateinit var user:FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth_ui)
 
-        val provider= mutableListOf(AuthUI.IdpConfig.GoogleBuilder().build())
+        val provider= mutableListOf(AuthUI.IdpConfig.GoogleBuilder().build(),
+            AuthUI.IdpConfig.PhoneBuilder().build())
 
         user=FirebaseAuth.getInstance()
 
@@ -48,8 +50,10 @@ class AuthUIActivity : AppCompatActivity() {
 
             val response=IdpResponse.fromResultIntent(data)
             if(resultCode==Activity.RESULT_OK){
+
                 Log.e(this::class.java.simpleName, user.currentUser?.email.toString())
                 changeState()
+
             }else{
                 Toast.makeText(this,
                     response?.error?.message,Toast.LENGTH_SHORT).show()
