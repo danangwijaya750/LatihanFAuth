@@ -20,7 +20,7 @@ class AuthUIActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth_ui)
 
-        val provider= arrayListOf(AuthUI.IdpConfig.GoogleBuilder().build())
+        val provider= mutableListOf(AuthUI.IdpConfig.GoogleBuilder().build())
 
         user=FirebaseAuth.getInstance()
 
@@ -36,15 +36,9 @@ class AuthUIActivity : AppCompatActivity() {
 
         btnLogout.setOnClickListener {
             user.signOut()
-            btnLogin.visibility=View.VISIBLE
-            btnLogout.visibility= View.GONE
+            changeState()
         }
-
-        if(user.currentUser!=null){
-            btnLogin.visibility=View.GONE
-            btnLogout.visibility= View.VISIBLE
-        }
-
+        changeState()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int,
@@ -53,16 +47,24 @@ class AuthUIActivity : AppCompatActivity() {
         if(requestCode==SIGN_IN_CODE&&resultCode==Activity.RESULT_OK){
 
             val response=IdpResponse.fromResultIntent(data)
-            if(requestCode==Activity.RESULT_OK){
-
-                Log.d(this::class.java.simpleName, user.currentUser?.email)
-                btnLogin.visibility=View.GONE
-                btnLogout.visibility= View.VISIBLE
+            if(resultCode==Activity.RESULT_OK){
+                Log.e(this::class.java.simpleName, user.currentUser?.email.toString())
+                changeState()
             }else{
                 Toast.makeText(this,
                     response?.error?.message,Toast.LENGTH_SHORT).show()
             }
 
+        }
+    }
+
+    private fun changeState(){
+        if(user.currentUser!=null){
+            btnLogin.visibility=View.GONE
+            btnLogout.visibility= View.VISIBLE
+        }else{
+            btnLogin.visibility=View.VISIBLE
+            btnLogout.visibility= View.GONE
         }
     }
 }
