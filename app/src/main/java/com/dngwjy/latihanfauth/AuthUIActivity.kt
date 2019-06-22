@@ -15,12 +15,14 @@ import kotlinx.android.synthetic.main.activity_auth_ui.*
 class AuthUIActivity : AppCompatActivity() {
 
     val SIGN_IN_CODE=111
-
+    lateinit var user:FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth_ui)
 
         val provider= arrayListOf(AuthUI.IdpConfig.GoogleBuilder().build())
+
+        user=FirebaseAuth.getInstance()
 
         btnLogin.setOnClickListener {
             startActivityForResult(
@@ -33,10 +35,14 @@ class AuthUIActivity : AppCompatActivity() {
         }
 
         btnLogout.setOnClickListener {
-            val user=FirebaseAuth.getInstance()
             user.signOut()
             btnLogin.visibility=View.VISIBLE
             btnLogout.visibility= View.GONE
+        }
+
+        if(user.currentUser!=null){
+            btnLogin.visibility=View.GONE
+            btnLogout.visibility= View.VISIBLE
         }
 
     }
@@ -48,8 +54,8 @@ class AuthUIActivity : AppCompatActivity() {
 
             val response=IdpResponse.fromResultIntent(data)
             if(requestCode==Activity.RESULT_OK){
-                val user = FirebaseAuth.getInstance().currentUser
-                Log.d(this::class.java.simpleName,user?.email)
+
+                Log.d(this::class.java.simpleName, user.currentUser?.email)
                 btnLogin.visibility=View.GONE
                 btnLogout.visibility= View.VISIBLE
             }else{
