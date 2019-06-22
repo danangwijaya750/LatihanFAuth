@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
@@ -31,6 +32,13 @@ class AuthUIActivity : AppCompatActivity() {
                 )
         }
 
+        btnLogout.setOnClickListener {
+            val user=FirebaseAuth.getInstance()
+            user.signOut()
+            btnLogin.visibility=View.VISIBLE
+            btnLogout.visibility= View.GONE
+        }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int,
@@ -42,6 +50,8 @@ class AuthUIActivity : AppCompatActivity() {
             if(requestCode==Activity.RESULT_OK){
                 val user = FirebaseAuth.getInstance().currentUser
                 Log.d(this::class.java.simpleName,user?.email)
+                btnLogin.visibility=View.GONE
+                btnLogout.visibility= View.VISIBLE
             }else{
                 Toast.makeText(this,
                     response?.error?.message,Toast.LENGTH_SHORT).show()
